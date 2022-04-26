@@ -2,7 +2,7 @@ package you.shall.not.pass.service;
 
 import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.stereotype.Service;
-import you.shall.not.pass.domain.UserDetail;
+import you.shall.not.pass.domain.UserAccount;
 import you.shall.not.pass.repositories.UserRepository;
 
 import java.util.Optional;
@@ -16,12 +16,12 @@ public class UserService {
         this.repository = repository;
     }
 
-    public UserDetail findUserByName(String name) {
-        Optional<UserDetail> optionalUser = repository.findByUserName(name);
+    public UserAccount findUserByName(String name) {
+        Optional<UserAccount> optionalUser = repository.findByUserName(name);
         return optionalUser.orElseThrow(() -> new UsernameNotFoundException("User not found"));
     }
 
-    public Optional<UserDetail> findUserById(Long id) {
+    public Optional<UserAccount> findUserById(Long id) {
         if (id == null) {
             return Optional.empty();
         }

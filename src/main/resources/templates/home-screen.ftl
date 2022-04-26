@@ -12,12 +12,12 @@
     <meta name="viewport" content="width=device-width, initial-scale=1">
     <script data-require="angular.js@1.6.6" data-semver="1.6.6"
             src="https://cdnjs.cloudflare.com/ajax/libs/angular.js/1.6.6/angular.js"></script>
-    <script data-require="angular-resource@1.4.1" data-semver="1.4.1"
-            src="https://code.angularjs.org/1.4.1/angular-resource.js"></script>
+    <script data-require="angular-resource@1.5.8" data-semver="1.5.8"
+            src="https://code.angularjs.org/1.5.8/angular-resource.js"></script>
     <script data-semver="1.4.1"
-            src="https://code.angularjs.org/1.4.1/angular-route.min.js"></script>
+            src="https://code.angularjs.org/1.5.8/angular-route.min.js"></script>
     <script data-semver="1.4.1"
-            src="https://code.angularjs.org/1.4.1/angular-cookies.min.js"></script>
+            src="https://code.angularjs.org/1.5.8/angular-cookies.min.js"></script>
     <link href="css/bootstrap.css" rel="stylesheet"/>
     <link href="css/app.css" rel="stylesheet"/>
     <script src="js/app/script.js"></script>

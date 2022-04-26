@@ -76,20 +76,28 @@ myApp.controller('AccessCtrl',
         };
 
         $scope.user = {};
-        $scope.login = function () {
+
+        $scope.login = () => {
             $scope.resourceContent = '';
             let credentials = $scope.user.username + ':' + $scope.user.password;
             $http({
                 method: 'POST',
                 url: 'http://localhost:8080/access',
                 headers: {
-                    'Authorization': 'Basic ' + btoa(credentials)
-                },
+                    'Authorization': 'Basic ' + btoa(credentials),
+                    'Content-Type': 'application/json'
+                }
             }).then(function (response) {
+                console.log("BLAH:" +  JSON.stringify(response));
                 $scope.resourceContent = response.data;
                 $location.path('content');
-            }, function (error) {
-                $scope.resourceContent = 'Unable to log in';
+            }, function (response) {
+                console.log( JSON.stringify(response));
+                if (response.message) {
+                    $scope.resourceContent = response.message;
+                } else {
+                    $scope.resourceContent = 'Unable to log in';
+                }
             });
         };
 

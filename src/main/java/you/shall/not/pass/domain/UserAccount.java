@@ -11,11 +11,14 @@ import javax.persistence.Id;
 @Entity
 @Setter
 @Getter
-public class UserDetail {
+public class UserAccount {
     @Id
     @GeneratedValue(strategy= GenerationType.AUTO)
     private long id;
     private String userName;
     private char[] level1Password;
     private char[] level2Password;
+    // todo implement this
+    private int failedAuthAttempts;
+    private boolean disabled;
 }

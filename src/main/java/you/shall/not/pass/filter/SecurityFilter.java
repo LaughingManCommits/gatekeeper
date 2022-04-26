@@ -9,15 +9,12 @@ import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Component;
 import you.shall.not.pass.domain.Access;
 import you.shall.not.pass.domain.Session;
-import you.shall.not.pass.domain.UserDetail;
 import you.shall.not.pass.dto.ViolationDto;
 import you.shall.not.pass.exception.AccessGrantException;
 import you.shall.not.pass.exception.CsrfViolationException;
 import you.shall.not.pass.filter.staticresource.StaticResourceValidator;
-import you.shall.not.pass.service.CookieService;
-import you.shall.not.pass.service.CsrfProtectionService;
-import you.shall.not.pass.service.SessionService;
-import you.shall.not.pass.service.UserService;
+import you.shall.not.pass.security.SecurityContextService;
+import you.shall.not.pass.service.*;
 
 import javax.servlet.*;
 import javax.servlet.http.HttpServletRequest;
@@ -34,16 +31,11 @@ public class SecurityFilter implements Filter {
 
     public static final String SESSION_COOKIE = "GRANT";
     public static final String EXECUTE_FILTER_ONCE = "you.shall.not.pass.filter";
-
     private static final Logger LOG = LoggerFactory.getLogger(SecurityFilter.class);
-
     private final Gson gson;
-    private final CookieService cookieService;
     private final SessionService sessionService;
     private final List<StaticResourceValidator> resourcesValidators;
-    private final CsrfProtectionService csrfProtectionService;
-    private final UserService userService;
-
+    private final SecurityContextService userContextService;
 
     @Override
     public void doFilter(ServletRequest request, ServletResponse response, FilterChain chain)
@@ -51,7 +43,8 @@ public class SecurityFilter implements Filter {
         try {
             HttpServletRequest httpServletRequest = (HttpServletRequest) request;
             if (isValidRequest(httpServletRequest)) {
-                shallNotPassLogic(httpServletRequest, (HttpServletResponse) response);
+                String requestURI = httpServletRequest.getRequestURI();
+                shallNotPassLogic(requestURI);
             }
             request.setAttribute(EXECUTE_FILTER_ONCE, true);
             chain.doFilter(request, response);
@@ -88,35 +81,27 @@ public class SecurityFilter implements Filter {
         writeResponse(response, gson.toJson(violationDto));
     }
 
-    private void shallNotPassLogic(HttpServletRequest request, HttpServletResponse response) {
-        final String sessionCookie = cookieService.getCookieValue(request, SESSION_COOKIE);
+    private void shallNotPassLogic(String requestURI) {
+        final String sessionCookie = userContextService.getSessionToken();
         final Optional<Session> sessionByToken = sessionService.findSessionByToken(sessionCookie);
-        final String requestedUri = request.getRequestURI();
-        LOG.info("incoming request {} with token {}", requestedUri, sessionCookie);
-        final Access grant = sessionByToken.map(Session::getGrant).orElse(null);
-        LOG.info("user grant level {}", grant);
-        final Optional<StaticResourceValidator> resourceValidator = getValidator(requestedUri);
+        LOG.info("incoming request on uri: '{}' with session token: {}", requestURI, sessionCookie);
 
-        if (requestedUri.equals("/access") || requestedUri.equals("/resources")) {
+        final String username = userContextService.getCurrentUser().orElse("unknown");
+        final Access access = userContextService.getCurrentAccessLevel().orElse(Access.Unknown);
+
+        LOG.info("session security context user: {}", username);
+        LOG.info("session security context Access grant: {}", access);
+
+        final Optional<StaticResourceValidator> resourceValidator = getValidator(requestURI);
+
+        if (requestURI.equals("/access") || requestURI.equals("/resources")) {
             return;
         }
 
-        grantAnonymousAccess(response, sessionCookie, sessionByToken, resourceValidator);
-        printAccessAuditLog(request, sessionByToken);
-        validateRequest(request, sessionByToken, grant, resourceValidator);
+        validateRequest(sessionByToken, access, resourceValidator);
     }
 
-    private void grantAnonymousAccess(HttpServletResponse response, String sessionCookie,
-                                      Optional<Session> sessionByToken,
-                                      Optional<StaticResourceValidator> resourceValidator) {
-        if (resourceValidator.isEmpty() && isExpiredSession(sessionCookie, sessionByToken)) {
-            cookieService.addCookie(csrfProtectionService.getCsrfCookie(), response);
-            cookieService.addCookie(sessionService.createAnonymousSession(Access.Level0), response);
-        }
-    }
-
-    private void validateRequest(HttpServletRequest request,
-                                 Optional<Session> sessionByToken, Access grant,
+    private void validateRequest(Optional<Session> sessionByToken, Access grant,
                                  Optional<StaticResourceValidator> resourceValidator) {
         resourceValidator.ifPresent(validator -> {
             LOG.info("resource validator enforced {}", validator.requires());
@@ -124,23 +109,7 @@ public class SecurityFilter implements Filter {
                     || validator.requires().levelIsHigher(grant)) {
                 throw new AccessGrantException(validator.requires(), "invalid access level");
             }
-            csrfProtectionService.validateCsrfCookie(request);
         });
-    }
-
-    private void printAccessAuditLog(HttpServletRequest request, Optional<Session> sessionByToken) {
-        sessionByToken.ifPresent(session -> {
-            Optional<UserDetail> userById = userService.findUserById(session.getUserId());
-            userById.ifPresent(user -> LOG.info("user {} is browsing resource {}",
-                    user.getUserName(), request.getRequestURI()));
-            if (userById.isEmpty()) {
-                LOG.info("Anonymous user is browsing resource {}", request.getRequestURI());
-            }
-        });
-    }
-
-    private boolean isExpiredSession(String sessionCookie, Optional<Session> sessionByToken) {
-        return sessionCookie == null || sessionService.isExpiredSession(sessionByToken);
     }
 
     private Optional<StaticResourceValidator> getValidator(String requestedUri) {

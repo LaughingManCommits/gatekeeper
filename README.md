@@ -11,9 +11,7 @@ level is elevated to appropriate level.
 
 ### todo
 * Complete and improve unit test on GateControllerIT.java
-* Improve the backend code, any changes will be accepted.
-* Improve the frontend code, any changes will be accepted.
-* Improve the application security, any changes will be accepted.
+* Complete as many todo's as you can. Search the code for them.
 * Add Unit tests where you see fit.
 
 NB Required:

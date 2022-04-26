@@ -1,62 +1,40 @@
 package you.shall.not.pass.controller;
 
 import com.google.gson.Gson;
+import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.ModelMap;
 import org.springframework.web.bind.annotation.*;
-import you.shall.not.pass.dto.StaticResourcesDto;
 import you.shall.not.pass.dto.ResponseDto;
+import you.shall.not.pass.dto.StaticResourcesDto;
 import you.shall.not.pass.dto.ViolationDto;
 import you.shall.not.pass.exception.CsrfViolationException;
 import you.shall.not.pass.filter.staticresource.StaticResourceService;
-import you.shall.not.pass.service.CookieService;
-import you.shall.not.pass.service.CsrfProtectionService;
-import you.shall.not.pass.service.SessionService;
+import you.shall.not.pass.service.AuthenticationService;
 
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
-import java.util.Optional;
 
-import static you.shall.not.pass.filter.SecurityFilter.SESSION_COOKIE;
+import static you.shall.not.pass.service.AuthenticationService.AUTHENTICATED;
 
 @Slf4j
 @Controller
+@RequiredArgsConstructor
 public class GateController {
 
-
-    private final SessionService sessionService;
-    private final CsrfProtectionService csrfProtectionService;
     private final StaticResourceService resourceService;
-    private final CookieService cookieService;
+    private final AuthenticationService authenticationService;
     private final Gson gson;
-
-    public GateController(SessionService sessionService, CsrfProtectionService csrfProtectionService,
-                          StaticResourceService resourceService, CookieService cookieService, Gson gson) {
-        this.sessionService = sessionService;
-        this.csrfProtectionService = csrfProtectionService;
-        this.resourceService = resourceService;
-        this.cookieService = cookieService;
-        this.gson = gson;
-    }
 
     @PostMapping({"/access"})
     public ResponseEntity<String> access(HttpServletResponse response, HttpServletRequest request) {
+        authenticationService.createAuthenticatedUserSession(request, response);
+        Object authenticated = request.getAttribute(AUTHENTICATED);
         ResponseDto.ResponseDtoBuilder builder = ResponseDto.builder();
-        final String sessionCookie = cookieService.getCookieValue(request, SESSION_COOKIE);
-
-        csrfProtectionService.validateCsrfCookie(request);
-
-        Optional<String> optionalSession = sessionService.stepUpOrCreateSession(sessionCookie);
-        optionalSession.ifPresent(session -> {
-            String csrf = csrfProtectionService.getCsrfCookie();
-            cookieService.addCookie(csrf, response);
-            cookieService.addCookie(session, response);
-            builder.authenticated(true);
-        });
-
+        builder.authenticated(authenticated != null);
         String json = gson.toJson(builder.build());
         log.info("Access response: " + json);
         return ResponseEntity.ok(json);
@@ -70,7 +48,8 @@ public class GateController {
     }
 
     @GetMapping({"/home"})
-    public String hello(ModelMap model) {
+    public String hello(HttpServletResponse response, HttpServletRequest request, ModelMap model) {
+        authenticationService.createAnonymousSession(request, response);
         model.addAttribute("title", "Basic Authentication and Access Application");
         return "home-screen";
     }
@@ -78,6 +57,7 @@ public class GateController {
     @ExceptionHandler(CsrfViolationException.class)
     @ResponseStatus(value = HttpStatus.BAD_REQUEST)
     public @ResponseBody ViolationDto handleResourceNotFound() {
+        // TODO Improve error handling to cover all known unchecked exceptions, validate service layers for exceptions
         return ViolationDto.builder().message("TODO!!!").build();
     }
 

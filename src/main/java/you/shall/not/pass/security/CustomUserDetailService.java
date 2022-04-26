@@ -1,4 +1,4 @@
-package you.shall.not.pass.service;
+package you.shall.not.pass.security;
 
 import lombok.Builder;
 import lombok.Data;
@@ -9,7 +9,7 @@ import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.core.userdetails.UserDetailsService;
 import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import you.shall.not.pass.domain.Access;
-import you.shall.not.pass.domain.UserDetail;
+import you.shall.not.pass.domain.UserAccount;
 import you.shall.not.pass.repositories.UserRepository;
 
 import java.util.HashSet;
@@ -24,7 +24,11 @@ public class CustomUserDetailService implements UserDetailsService {
         this.repository = repository;
     }
 
-    private UserGrantDetail getDetails(String lvl, UserDetail user) throws UsernameNotFoundException {
+    private UserGrantDetail getDetails(String lvl, UserAccount user) throws UsernameNotFoundException {
+        // todo implement failed authentication attempts
+        // todo reset user failed authentication attempts after successful logon
+        // todo disable user account after 3 failed attempts (optionally in the last week), not further logon attempts allowed
+        // todo throw unique exception when user account is disabled
         UserGrantDetail.UserGrantDetailBuilder builder = UserGrantDetail.builder();
         Set<GrantedAuthority> grants = new HashSet<>();
         Access grant = Access.find(lvl).orElseThrow(()
@@ -45,8 +49,8 @@ public class CustomUserDetailService implements UserDetailsService {
         if (userArray.length == 2) {
             String lvl = userArray[0];
             String userName = userArray[1];
-            Optional<UserDetail> optionalUser = repository.findByUserName(userName);
-            UserDetail gateKeeperUser = optionalUser
+            Optional<UserAccount> optionalUser = repository.findByUserName(userName);
+            UserAccount gateKeeperUser = optionalUser
                     .orElseThrow(() -> new UsernameNotFoundException("User not found"));
 
             UserGrantDetail userGrantDetail = getDetails(lvl, gateKeeperUser);
@@ -60,7 +64,6 @@ public class CustomUserDetailService implements UserDetailsService {
     @Builder
     @Data
     private static class UserGrantDetail {
-
         Set<GrantedAuthority> grants;
         String userName;
         char[] password;

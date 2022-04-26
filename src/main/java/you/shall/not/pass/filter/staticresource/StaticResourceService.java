@@ -24,6 +24,7 @@ public class StaticResourceService {
                     try {
                         return resource.getFile().isFile();
                     } catch (IOException e) {
+                        // TODO replace with proper exception
                         throw new RuntimeException(e);
                     }
                 }).map(resource -> {
@@ -31,6 +32,7 @@ public class StaticResourceService {
                         String uri = resource.getURI().toString();
                         return uri.substring(uri.indexOf(context) + context.length());
                     } catch (IOException e) {
+                        // TODO replace with proper exception
                         throw new RuntimeException(e);
                     }
                 }).collect(Collectors.toList());

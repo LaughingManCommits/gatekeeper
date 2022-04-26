@@ -10,7 +10,7 @@ import org.springframework.security.config.annotation.web.configuration.WebSecur
 import org.springframework.security.config.http.SessionCreationPolicy;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import you.shall.not.pass.repositories.UserRepository;
-import you.shall.not.pass.service.CustomUserDetailService;
+import you.shall.not.pass.service.AuthenticationService;
 
 
 @Configuration
@@ -20,6 +20,8 @@ public class SecurityConfigAdapter extends WebSecurityConfigurerAdapter {
 
     private final UserRepository userRepository;
     private final PasswordEncoder passwordEncoder;
+    private final SessionCookieSecurityContextRepository sessionCookieSecurityContextRepository;
+    private final CustomBasicAuthenticationEntryPoint authenticationEntryPoint;
 
     @Autowired
     public void configureGlobal(AuthenticationManagerBuilder authenticationManagerBuilder)
@@ -33,8 +35,9 @@ public class SecurityConfigAdapter extends WebSecurityConfigurerAdapter {
     protected void configure(HttpSecurity http) throws Exception {
         http.sessionManagement()
                 .sessionCreationPolicy(SessionCreationPolicy.STATELESS)
+                .and().securityContext().securityContextRepository(sessionCookieSecurityContextRepository)
                 .and().csrf().disable()
-                .httpBasic()
+                .httpBasic().authenticationEntryPoint(authenticationEntryPoint)
                 .and()
                 .authorizeRequests()
                 .antMatchers("/access")

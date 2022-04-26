@@ -6,7 +6,7 @@ import org.springframework.boot.ApplicationArguments;
 import org.springframework.boot.ApplicationRunner;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Component;
-import you.shall.not.pass.domain.UserDetail;
+import you.shall.not.pass.domain.UserAccount;
 import you.shall.not.pass.properties.UserProperties;
 import you.shall.not.pass.repositories.UserRepository;
 
@@ -31,21 +31,13 @@ public class UserCreationRunner implements ApplicationRunner {
     public void run(ApplicationArguments applicationArguments) {
 
         for (UserProperties.User newUser : userProperties.getUsers()) {
-            UserDetail user = new UserDetail();
-
+            UserAccount user = new UserAccount();
             user.setUserName(newUser.getUserName());
-            user.setLevel1Password(
-                            passwordEncoder.encode(
-                                    String.valueOf(newUser.getLevel1Password())).toCharArray());
-            user.setLevel2Password(
-                            passwordEncoder.encode(
-                                    String.valueOf(newUser.getLevel2Password())).toCharArray());
-
-            Optional<UserDetail> optionalUser = resp.findByUserName(newUser.getUserName());
-
+            user.setLevel1Password(passwordEncoder.encode(String.valueOf(newUser.getLevel1Password())).toCharArray());
+            user.setLevel2Password(passwordEncoder.encode(String.valueOf(newUser.getLevel2Password())).toCharArray());
+            Optional<UserAccount> optionalUser = resp.findByUserName(newUser.getUserName());
             optionalUser.ifPresent(dbUser -> dbUser.setId(user.getId()));
-
-            UserDetail saved = resp.save(user);
+            UserAccount saved = resp.save(user);
             LOG.info("User {} created for {}...", saved.getId(), newUser.getUserName());
         }
 

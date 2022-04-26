@@ -20,12 +20,10 @@ import java.util.regex.Pattern;
 
 
 @Component
-public class CsrfProtectionService {
+public class CsrfCookieService {
 
-    private static final Logger LOG = LoggerFactory.getLogger(CsrfProtectionService.class);
-
+    private static final Logger LOG = LoggerFactory.getLogger(CsrfCookieService.class);
     private final static SecureRandom SECURE_RANDOM = new SecureRandom();
-
     private final static String CSRF_COOKIE_NAME = "CSRF";
     private final static String XSRF_GUARD_NAME = "XSRF";
     private final static int STANDARD_SIZE_TOKEN = 16;
@@ -61,7 +59,8 @@ public class CsrfProtectionService {
 
         final String xsrfGuard = getCsrfGuardCheckValue(request);
         final String csrf = cookieService.getCookieValue(request, CSRF_COOKIE_NAME);
-
+        // TODO improve all logging in all service classes, logging info all seems problematic
+        // TODO insure that any logged tokens will be masked as following 03A3D7DA*******
         LOG.info("incoming csrf cookie: {}", csrf);
         LOG.info("incoming xsrf value: {}", xsrfGuard);
 
