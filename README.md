@@ -112,7 +112,7 @@ returned.
 
 #### Basic CSRF protection
 
-* A get request to "/home" screen will receive new csrf token, if no csrf token is available.
-* All successful authentication request will receive new csrf token.
-* All POST requests require the CSRF token present
+* A get request to "/home" screen will receive a new csrf token when no csrf token is present.
+* All successful authentication request will receive a new csrf token.
+* All POST requests require the CSRF token to be present
 
