@@ -33,7 +33,7 @@ Open your browser on "http://localhost:8080/home"
 * Low is set to numeric password
 * High is alphanumeric password
 
-### Access resource
+### Access Endpoint
 
 POST "http://localhost:8080/access"
 
