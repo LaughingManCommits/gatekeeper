@@ -1,7 +1,10 @@
 # Access Gateway Test
 
-very simple access-gateway that regulates resources by access level. Users can only access resources once their access
-level is elevated to appropriate level.
+Very simple application that regulates resources by access level.
+
+Users can only access resources once their access level is elevated to appropriate level.
+
+For example accessing any content behind the URI "/Level1/**" will be blocked without the appropriate session and access level. 
 
 ### Current Tech Stack
 
@@ -10,9 +13,10 @@ level is elevated to appropriate level.
 * Spring Security
 
 ### todo
-* Complete and improve unit test on GateControllerIT.java
+* Complete and improve all unit tests in GateControllerIT.java
 * Complete as many todo's as you can. Search the code for them.
 * Add Unit tests where you see fit.
+* Improve any code as you wish.
 
 NB Required:
 * Document all changes that you have made and provide motivation for the changes.
@@ -58,7 +62,7 @@ Successful Authentication Response
 Error Authentication Response
 Bad Credentials:
 ```
-500
+403
 ```
 Bad CSRF:
 ```
