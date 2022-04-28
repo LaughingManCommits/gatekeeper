@@ -2,9 +2,9 @@
 
 Very simple application that regulates resources by access level.
 
-Users can only access resources once their access level is elevated to appropriate level.
+Users can only retrieve/access resources once their session access level is elevated to the required access level.
 
-For example when accessing any content behind the URI "/Level1/**" the request will be blocked without the appropriate session and access level. 
+For example when accessing any content behind the URI "/Level1/**" the request will be blocked when the atteched session does not have the required access level. 
 
 ### Current Tech Stack
 
