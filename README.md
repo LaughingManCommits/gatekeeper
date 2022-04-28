@@ -116,3 +116,7 @@ returned.
 * All successful authentication request will receive a new csrf token.
 * All POST requests require the CSRF token to be present
 
+
+Provide us with your git patch files containing your changes.
+Please make sure that if you have large formatting changes that this is not included with the patch files 
+
