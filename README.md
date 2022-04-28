@@ -75,7 +75,7 @@ on successful authentication responses
 * session cookie
 * new CSRF cookie
 
-### Hosted static-resources
+### Resources Endpoint
 
 GET "http://localhost:8080/resources"
 
