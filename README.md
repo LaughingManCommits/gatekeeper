@@ -4,7 +4,7 @@ Very simple application that regulates resources by access level.
 
 Users can only access resources once their access level is elevated to appropriate level.
 
-For example accessing any content behind the URI "/Level1/**" will be blocked without the appropriate session and access level. 
+For example when accessing any content behind the URI "/Level1/**" the request will be blocked without the appropriate session and access level. 
 
 ### Current Tech Stack
 
