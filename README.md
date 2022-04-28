@@ -108,8 +108,8 @@ returned.
 ### Basic CSRF protection
 
 * A get request to "/home" screen will receive a new csrf token when no csrf token is present.
-* All successful authentication request will receive a new csrf token.
-* All POST requests require the CSRF token to be present
+* Any successful authentication request will receive a new csrf token.
+* Any POST request requires a CSRF token to be present
 
 
 Provide us with your git patch files containing your changes.
