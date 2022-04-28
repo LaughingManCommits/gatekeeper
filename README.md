@@ -1,4 +1,4 @@
-# Access Gateway Test
+# Gatekeeper Test
 
 Very simple application that regulates resources by access level.
 
