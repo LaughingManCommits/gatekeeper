@@ -16,7 +16,7 @@ For example when requesting any content behind the URI "/Level1/**", the request
 * Complete and improve all unit tests in GateControllerIT.java
 * Complete as many todo's as you can. Search the code for them.
 * Add Unit tests where you see fit.
-* Improve any code as you wish.
+* Improve what ever code you wish to improve.
 
 NB Required:
 * Document all changes that you have made and provide motivation for the changes.
@@ -96,21 +96,16 @@ Response
 
 will give a list of all static resources hosted by the server
 
-#### Usage
+#### Resource Access Violations
 
-* Resources can be accessed directly "http://localhost:8080/level1/low_access.txt"
-* Resources require session and appropriate access level to be requested
-
-#### Violations
-
-If no appropriate session and csrf token is received on resource request, an access(403) violation is
+If no appropriate session is received on a resource request, an access(403) violation is
 returned.
 
 ```
 {"requiredAccess":"Level1","message":"invalid access level"}
 ```
 
-#### Basic CSRF protection
+### Basic CSRF protection
 
 * A get request to "/home" screen will receive a new csrf token when no csrf token is present.
 * All successful authentication request will receive a new csrf token.
