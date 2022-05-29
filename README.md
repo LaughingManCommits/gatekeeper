@@ -13,9 +13,9 @@ For example when requesting any content behind the URI "/Level1/\**", the reques
 * Spring Security
 
 ### todo
-* Complete and improve unit test on ControllerIntegrationTests.java
-* Complete and improve unit test on UserInteractionTests.java
-* Complete as many todo's as you can. Search the code for them.
+* Complete and improve the unit tests located on ControllerIntegrationTests.java
+* Complete and improve the unit tests located on UserInteractionTests.java
+* Complete as many "todo"s as you can. Search the code for them.
 * Add Unit tests where you see fit.
 * Improve what ever code you wish to improve.
 
