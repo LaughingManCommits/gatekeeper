@@ -1,6 +1,6 @@
 # Gatekeeper Test
 
-Very simple application that regulates resources by access level.
+A very simple application that regulates resources by access level.
 
 Users can only retrieve/access resources once their session access level is elevated to the required access level.
 
