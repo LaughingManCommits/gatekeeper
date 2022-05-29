@@ -5,7 +5,7 @@ import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.stereotype.Service;
-import you.shall.not.pass.domain.Access;
+import you.shall.not.pass.domain.AccessLevel;
 
 import java.util.ArrayList;
 import java.util.Collection;
@@ -15,18 +15,18 @@ import java.util.Optional;
 @Service
 public class SecurityContextService {
 
-    public Optional<Access> getCurrentAccessLevel() {
+    public Optional<AccessLevel> getCurrentAccessLevel() {
         return getGateKeeperGrant();
     }
 
-    private Optional<Access> getGateKeeperGrant() {
+    private Optional<AccessLevel> getGateKeeperGrant() {
         Object principal = SecurityContextHolder.getContext().getAuthentication().getPrincipal();
 
         if (principal instanceof UserDetails) {
             UserDetails userDetails = ((UserDetails) principal);
             List<GrantedAuthority> targetList = new ArrayList<>(userDetails.getAuthorities());
             return targetList.stream().map(grantedAuthority ->
-                    Access.valueOf(grantedAuthority.getAuthority())).findAny();
+                    AccessLevel.valueOf(grantedAuthority.getAuthority())).findAny();
         }
 
         if (principal == null) {
@@ -34,7 +34,7 @@ public class SecurityContextService {
             if (authentication instanceof SessionCookieAuthenticationToken) {
                 SessionCookieAuthenticationToken authenticationToken = ((SessionCookieAuthenticationToken) authentication);
                 Collection<GrantedAuthority> authorities = authenticationToken.getAuthorities();
-                return authorities.stream().findFirst().map(grant -> Access.valueOf(grant.getAuthority()));
+                return authorities.stream().findFirst().map(grant -> AccessLevel.valueOf(grant.getAuthority()));
             }
         }
 
@@ -57,15 +57,15 @@ public class SecurityContextService {
         return Optional.empty();
     }
 
-    public String getSessionToken() {
+    public Optional<String> getSessionToken() {
         Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
 
         if (authentication instanceof SessionCookieAuthenticationToken) {
             SessionCookieAuthenticationToken authenticationToken = ((SessionCookieAuthenticationToken) authentication);
-            return authenticationToken.getSessionId();
+            return Optional.of(authenticationToken.getSessionId());
         }
 
-        return null;
+        return Optional.empty();
     }
 
 }

@@ -1,4 +1,4 @@
-package you.shall.not.pass.filter.staticresource;
+package you.shall.not.pass.security.staticresource;
 
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.core.io.Resource;
@@ -10,7 +10,7 @@ import java.util.List;
 import java.util.stream.Collectors;
 
 @Component
-public class StaticResourceService {
+public class StaticResourcePathsService {
 
     @Value("classpath:static/**")
     private Resource[] resources;
@@ -18,8 +18,8 @@ public class StaticResourceService {
     @Value("${static.resources}")
     private String context;
 
-    public List<String> resolveStaticResources(Resource[] level) {
-        return Arrays.stream(level)
+    public List<String> resolveStaticResources(Resource[] staticResource) {
+        return Arrays.stream(staticResource)
                 .filter(resource -> {
                     try {
                         return resource.getFile().isFile();

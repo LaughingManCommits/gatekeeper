@@ -23,7 +23,6 @@ public class CookieService {
                 .orElse(null);
     }
 
-
     public String createCookie(String name, String token, Integer expireInSeconds, boolean httpOnly) {
         List<String> headerValues = new ArrayList<>();
         headerValues.add(name + "=" + token);

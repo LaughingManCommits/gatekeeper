@@ -1,0 +1,3 @@
+staticResources:
+  - pathPattern: "/Level1/**"
+    requiredAccessLevel: 1

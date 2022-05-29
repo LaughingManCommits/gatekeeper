@@ -8,7 +8,7 @@ import org.springframework.security.core.userdetails.User;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.core.userdetails.UserDetailsService;
 import org.springframework.security.core.userdetails.UsernameNotFoundException;
-import you.shall.not.pass.domain.Access;
+import you.shall.not.pass.domain.AccessLevel;
 import you.shall.not.pass.domain.UserAccount;
 import you.shall.not.pass.repositories.UserRepository;
 
@@ -25,18 +25,18 @@ public class CustomUserDetailService implements UserDetailsService {
     }
 
     private UserGrantDetail getDetails(String lvl, UserAccount user) throws UsernameNotFoundException {
-        // todo implement failed authentication attempts
-        // todo reset user failed authentication attempts after successful logon
-        // todo disable user account after 3 failed attempts (optionally in the last week), not further logon attempts allowed
-        // todo throw unique exception when user account is disabled
+        //TODO implement failed authentication attempts
+        //TODO reset user failed authentication attempts after successful logon
+        //TODO disable user account after 3 failed attempts (optionally in the last week), not further logon attempts allowed
+        //TODO throw unique exception when user account is disabled
         UserGrantDetail.UserGrantDetailBuilder builder = UserGrantDetail.builder();
         Set<GrantedAuthority> grants = new HashSet<>();
-        Access grant = Access.find(lvl).orElseThrow(()
+        AccessLevel grant = AccessLevel.find(lvl).orElseThrow(()
                 -> new UsernameNotFoundException("requested grant not supported"));
         builder.userName(user.getUserName());
-        if (Access.Level1 == grant) {
+        if (AccessLevel.Level1 == grant) {
             builder.password(user.getLevel1Password());
-        } else if (Access.Level2 == grant) {
+        } else if (AccessLevel.Level2 == grant) {
             builder.password(user.getLevel2Password());
         }
         grants.add(new SimpleGrantedAuthority(grant.name()));

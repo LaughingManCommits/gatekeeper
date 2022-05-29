@@ -7,6 +7,7 @@ import javax.persistence.Entity;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
+import java.util.Date;
 
 @Entity
 @Setter
@@ -18,7 +19,9 @@ public class UserAccount {
     private String userName;
     private char[] level1Password;
     private char[] level2Password;
-    // todo implement this
+    //TODO implement this
     private int failedAuthAttempts;
     private boolean disabled;
+    //TODO use instants
+    private Date disabledDate;
 }

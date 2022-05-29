@@ -21,7 +21,7 @@ import java.util.Collections;
 import java.util.Optional;
 import java.util.Set;
 
-import static you.shall.not.pass.filter.SecurityFilter.SESSION_COOKIE;
+import static you.shall.not.pass.security.SecurityFilter.SESSION_COOKIE;
 
 @Slf4j
 @Component
@@ -39,7 +39,7 @@ public class SessionCookieSecurityContextRepository implements SecurityContextRe
         final SecurityContext context = SecurityContextHolder.createEmptyContext();
         final String sessionCookie = cookieService.getCookieValue(request, SESSION_COOKIE);
         if (request.getRequestURI().equals("/home")
-                || request.getRequestURI().equals("/access")
+                || request.getRequestURI().equals("/authenticate")
                 || sessionCookie == null) {
             return context;
         }
@@ -51,7 +51,7 @@ public class SessionCookieSecurityContextRepository implements SecurityContextRe
         }
 
         final Session session = sessionByToken.get();
-        final SimpleGrantedAuthority grant = new SimpleGrantedAuthority(session.getGrant().name());
+        final SimpleGrantedAuthority grant = new SimpleGrantedAuthority(session.getLevel().name());
         final Optional<UserAccount> userById = userService.findUserById(session.getUserId());
         final Set<SimpleGrantedAuthority> simpleGrantedAuthorities = Collections.singleton(grant);
 
@@ -75,7 +75,7 @@ public class SessionCookieSecurityContextRepository implements SecurityContextRe
     @Override
     public boolean containsContext(HttpServletRequest request) {
         if (request.getRequestURI().equals("/home")
-                || request.getRequestURI().equals("/access")) {
+                || request.getRequestURI().equals("/authenticate")) {
             return false;
         }
 

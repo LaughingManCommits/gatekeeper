@@ -12,14 +12,12 @@ import java.util.Date;
 @Entity
 @Setter
 @Getter
-public class Session {
+public class SecurityKey {
     @Id
     @GeneratedValue(strategy= GenerationType.AUTO)
-    private Long id;
-    private String sessionId;
-    private AccessLevel level;
-    private Long userId;
-    private String token;
+    private long id;
+    private String kid;
+    private byte[] key;
     //TODO use instants
     private Date date;
 }

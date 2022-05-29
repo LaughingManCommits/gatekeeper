@@ -5,17 +5,24 @@
     <parent>
         <groupId>org.springframework.boot</groupId>
         <artifactId>spring-boot-starter-parent</artifactId>
-        <version>2.6.7</version>
+        <version>2.6.8</version>
         <relativePath/>
     </parent>
     <groupId>you.shall.not</groupId>
     <artifactId>pass</artifactId>
     <version>0.0.1-SNAPSHOT</version>
-    <name>pass</name>
-    <description>Demo project for Spring Boot</description>
+    <name>gatekeeper project</name>
+    <description>gatekeeper test app</description>
 
     <properties>
         <java.version>11</java.version>
+        <spring-cloud.version>2021.0.3-SNAPSHOT</spring-cloud.version>
+        <playwright.version>1.22.0</playwright.version>
+        <hsqldb.version>2.6.1</hsqldb.version>
+        <gson.version>2.9.0</gson.version>
+        <commons-lang3.version>3.12.0</commons-lang3.version>
+        <hkdf.version>1.1.0</hkdf.version>
+        <maven-failsafe-plugin.version>3.0.0-M6</maven-failsafe-plugin.version>
     </properties>
 
     <dependencies>
@@ -26,15 +33,21 @@
         </dependency>
 
         <dependency>
+            <groupId>at.favre.lib</groupId>
+            <artifactId>hkdf</artifactId>
+            <version>${hkdf.version}</version>
+        </dependency>
+
+        <dependency>
             <groupId>com.google.code.gson</groupId>
             <artifactId>gson</artifactId>
-            <version>2.9.0</version>
+            <version>${gson.version}</version>
         </dependency>
 
         <dependency>
             <groupId>org.apache.commons</groupId>
             <artifactId>commons-lang3</artifactId>
-            <version>3.12.0</version>
+            <version>${commons-lang3.version}</version>
         </dependency>
 
         <dependency>
@@ -58,9 +71,9 @@
         </dependency>
 
         <dependency>
-            <groupId>com.h2database</groupId>
-            <artifactId>h2</artifactId>
-            <version>2.1.212</version>
+            <groupId>org.hsqldb</groupId>
+            <artifactId>hsqldb</artifactId>
+            <version>${hsqldb.version}</version>
         </dependency>
 
         <dependency>
@@ -99,6 +112,12 @@
             <scope>test</scope>
         </dependency>
 
+        <dependency>
+            <groupId>com.microsoft.playwright</groupId>
+            <artifactId>playwright</artifactId>
+            <version>${playwright.version}</version>
+        </dependency>
+
     </dependencies>
 
     <build>
@@ -110,7 +129,7 @@
             <plugin>
                 <groupId>org.apache.maven.plugins</groupId>
                 <artifactId>maven-failsafe-plugin</artifactId>
-                <version>3.0.0-M6</version>
+                <version>${maven-failsafe-plugin.version}</version>
                 <executions>
                     <execution>
                         <goals>

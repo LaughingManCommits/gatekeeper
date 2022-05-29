@@ -1,6 +1,5 @@
 /**
- * Instantiate the app, the 'myApp' parameter must match
- * what is in ng-app
+ * TODO BONUS remove angular 1 and use the latest angular or any newer javascript framework, basically rewrite the frontend
  */
 var myApp = angular.module('myApp', ['ngRoute', 'ngCookies']);
 
@@ -53,7 +52,7 @@ myApp.controller('AccessCtrl',
         $scope.getItems = function () {
             $http({
                 method: 'GET',
-                url: 'http://localhost:8080/resources'
+                url: '/resources'
             }).then(function (response) {
                 $scope.items = response.data;
             }, function (error) {
@@ -82,7 +81,7 @@ myApp.controller('AccessCtrl',
             let credentials = $scope.user.username + ':' + $scope.user.password;
             $http({
                 method: 'POST',
-                url: 'http://localhost:8080/access',
+                url: '/authenticate',
                 headers: {
                     'Authorization': 'Basic ' + btoa(credentials),
                     'Content-Type': 'application/json'

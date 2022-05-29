@@ -53,14 +53,14 @@
                     <div class="col-md-4">
                         <div class="form-group">
                             <label>
-                                <input type="text" class="form-control" ng-model="user.username"
+                                <input id="usr" type="text" class="form-control" ng-model="user.username"
                                        placeholder="1#bob" required=""/>
                             </label>
                         </div>
 
                         <div class="form-group">
                             <label>
-                                <input type="password" class="form-control" ng-model="user.password"
+                                <input id="psw" type="password" class="form-control" ng-model="user.password"
                                        placeholder="password" required=""/>
                             </label>
                         </div>

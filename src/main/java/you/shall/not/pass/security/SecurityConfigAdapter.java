@@ -10,7 +10,6 @@ import org.springframework.security.config.annotation.web.configuration.WebSecur
 import org.springframework.security.config.http.SessionCreationPolicy;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import you.shall.not.pass.repositories.UserRepository;
-import you.shall.not.pass.service.AuthenticationService;
 
 
 @Configuration
@@ -40,7 +39,7 @@ public class SecurityConfigAdapter extends WebSecurityConfigurerAdapter {
                 .httpBasic().authenticationEntryPoint(authenticationEntryPoint)
                 .and()
                 .authorizeRequests()
-                .antMatchers("/access")
+                .antMatchers("/authenticate")
                 .permitAll();
     }
 

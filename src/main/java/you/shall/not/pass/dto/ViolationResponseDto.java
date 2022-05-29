@@ -3,13 +3,13 @@ package you.shall.not.pass.dto;
 import lombok.Builder;
 import lombok.Getter;
 import lombok.Setter;
-import you.shall.not.pass.domain.Access;
+import you.shall.not.pass.domain.AccessLevel;
 
 @Getter
 @Setter
 @Builder
-public class ViolationDto {
+public class ViolationResponseDto {
     private Boolean csrfPassed;
-    private Access requiredAccess;
+    private AccessLevel requiredAccessLevel;
     private String message;
 }

@@ -11,7 +11,6 @@ import java.util.Date;
 
 @Component
 public class DateService {
-
     public static Date asDate(LocalDateTime localDateTime) {
         return Date.from(localDateTime.atZone(ZoneId.systemDefault()).toInstant());
     }

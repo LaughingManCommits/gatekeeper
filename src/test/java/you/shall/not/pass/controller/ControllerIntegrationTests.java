@@ -11,12 +11,16 @@ import org.junit.jupiter.api.Disabled;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.boot.web.server.LocalServerPort;
 import org.springframework.http.HttpStatus;
 import org.springframework.test.annotation.DirtiesContext;
 import org.springframework.test.annotation.DirtiesContext.ClassMode;
 import org.springframework.test.context.junit.jupiter.SpringExtension;
+import you.shall.not.pass.properties.UserProperties;
+
+import java.util.List;
 
 import static io.restassured.RestAssured.given;
 import static org.assertj.core.api.Assertions.assertThat;
@@ -24,7 +28,10 @@ import static org.assertj.core.api.Assertions.assertThat;
 @ExtendWith(SpringExtension.class)
 @DirtiesContext(classMode = ClassMode.BEFORE_CLASS)
 @SpringBootTest(webEnvironment = SpringBootTest.WebEnvironment.RANDOM_PORT)
-class GateControllerIT {
+class ControllerIntegrationTests {
+
+    @Autowired
+    private UserProperties userProperties;
 
     @LocalServerPort
     private int port;
@@ -79,50 +86,55 @@ class GateControllerIT {
     @Test
     @DisplayName("level 2 authenticated user accessing level 1 resources: 200 expected")
     void test7() {
-        // Load home page
-        Response homeResponse = given()
-                .contentType(ContentType.JSON)
-                .when()
-                .get(createURLWithPort("/home"))
-                .then()
-                .extract().response();
-        // assert that 200 http response is given
-        assertThat(HttpStatus.OK.value()).isEqualTo(homeResponse.getStatusCode());
-        // Retrieve CSRF tokens (https://en.wikipedia.org/wiki/Cross-site_request_forgery)
-        // https://cheatsheetseries.owasp.org/cheatsheets/Cross-Site_Request_Forgery_Prevention_Cheat_Sheet.html
-        String csrf = homeResponse.getCookie("CSRF");
-        String anonymousSession = homeResponse.getCookie("GRANT");
-        // Authenticate user, insure CSRF and GRANT session is known
-        Response authenticationResponse = given()
-                .contentType(ContentType.JSON)
-                .header(new Header("XSRF", csrf))
-                .auth()
-                .preemptive()
-                .basic("2#bob", "test1")
-                .cookie("GRANT", anonymousSession)
-                .cookie("CSRF", csrf)
-                .when()
-                .post(createURLWithPort("/access"))
-                .then()
-                .extract().response();
-        // assert that 200 http response is given
-        assertThat(HttpStatus.OK.value()).isEqualTo(authenticationResponse.getStatusCode());
-        assertThat(authenticationResponse.getBody().asString()).contains("{\"authenticated\":true}");
-        // retrieve authenticated session
-        String level2SessionCookie = authenticationResponse.getCookie("GRANT");
-        // assert that session are rotated from anonymous to authenticated session
-        assertThat(level2SessionCookie).isNotEqualTo(anonymousSession);
-        // retrieved protected resource with authenticated session
-        Response resourceAccess = given()
-                .contentType(ContentType.JSON)
-                .when()
-                .cookie("GRANT", level2SessionCookie)
-                .get(createURLWithPort("/Level1/low/access.html"))
-                .then()
-                .extract().response();
-        // validate secured resource is fetched
-        assertThat(HttpStatus.OK.value()).isEqualTo(resourceAccess.getStatusCode());
-        assertThat(resourceAccess.getBody().asString()).contains("<p><a href=\"https://www.youtube.com/watch?v=BhSEXdQHwBE\">try me</a></p>");
+        List<UserProperties.User> users = userProperties.getUsers();
+        for (UserProperties.User user : users) {
+            String userName = "2#" + user.getUserName();
+            String password = new String(user.getLevel2Password());
+            // Load home page
+            Response homeResponse = given()
+                    .contentType(ContentType.JSON)
+                    .when()
+                    .get(createURLWithPort("/home"))
+                    .then()
+                    .extract().response();
+            // assert that 200 http response is given
+            assertThat(HttpStatus.OK.value()).isEqualTo(homeResponse.getStatusCode());
+            // Retrieve CSRF tokens (https://en.wikipedia.org/wiki/Cross-site_request_forgery)
+            // https://cheatsheetseries.owasp.org/cheatsheets/Cross-Site_Request_Forgery_Prevention_Cheat_Sheet.html
+            String csrf = homeResponse.getCookie("CSRF");
+            String anonymousSession = homeResponse.getCookie("GRANT");
+            // Authenticate user, insure CSRF and GRANT session is known
+            Response authenticationResponse = given()
+                    .contentType(ContentType.JSON)
+                    .header(new Header("XSRF", csrf))
+                    .auth()
+                    .preemptive()
+                    .basic(userName, password)
+                    .cookie("GRANT", anonymousSession)
+                    .cookie("CSRF", csrf)
+                    .when()
+                    .post(createURLWithPort("/authenticate"))
+                    .then()
+                    .extract().response();
+            // assert that 200 http response is given
+            assertThat(HttpStatus.OK.value()).isEqualTo(authenticationResponse.getStatusCode());
+            assertThat(authenticationResponse.getBody().asString()).contains("{\"authenticated\":true}");
+            // retrieve authenticated session
+            String level2SessionCookie = authenticationResponse.getCookie("GRANT");
+            // assert that session are rotated from anonymous to authenticated session
+            assertThat(level2SessionCookie).isNotEqualTo(anonymousSession);
+            // retrieved protected resource with authenticated session
+            Response resourceAccess = given()
+                    .contentType(ContentType.JSON)
+                    .when()
+                    .cookie("GRANT", level2SessionCookie)
+                    .get(createURLWithPort("/Level1/page.html"))
+                    .then()
+                    .extract().response();
+            // validate secured resource is fetched
+            assertThat(HttpStatus.OK.value()).isEqualTo(resourceAccess.getStatusCode());
+            assertThat(resourceAccess.getBody().asString()).contains("https://www.youtube.com");
+        }
     }
 
     @Disabled

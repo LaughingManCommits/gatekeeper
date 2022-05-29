@@ -13,7 +13,8 @@ For example when requesting any content behind the URI "/Level1/**", the request
 * Spring Security
 
 ### todo
-* Complete and improve all unit tests in GateControllerIT.java
+* Complete and improve unit test on ControllerIntegrationTests.java
+* Complete and improve unit test on UserInteractionTests.java
 * Complete as many todo's as you can. Search the code for them.
 * Add Unit tests where you see fit.
 * Improve what ever code you wish to improve.
@@ -30,12 +31,13 @@ Open your browser on "http://localhost:8080/home"
 
 ### Access levels Supported
 
-* Low is set to numeric password
-* High is alphanumeric password
+* 0 is set to nothing
+* 1 is set to numeric password
+* 2 is alphanumeric password
 
 ### Access Endpoint
 
-POST "http://localhost:8080/access"
+POST "http://localhost:8080/authenticate"
 
 Required Headers
 * Authorization
@@ -102,7 +104,7 @@ If no appropriate session is received on a resource request, an access(403) viol
 returned.
 
 ```
-{"requiredAccess":"Level1","message":"invalid access level"}
+{"requiredAccess":"Level1","message":"invalid accessLevel level"}
 ```
 
 ### Basic CSRF protection

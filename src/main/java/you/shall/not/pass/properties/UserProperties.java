@@ -13,7 +13,7 @@ import java.util.List;
 @ConfigurationProperties("data")
 @Getter
 @Setter
-// TODO implement immutable properties
+//TODO implement immutable properties
 public class UserProperties {
 
     private List<User> users = new ArrayList<>();

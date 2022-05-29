@@ -4,8 +4,8 @@ import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
 
 @SpringBootApplication
-public class AccessGateApp {
+public class GatekeeperApplication {
     public static void main(String[] args) {
-        SpringApplication.run(AccessGateApp.class, args);
+        SpringApplication.run(GatekeeperApplication.class, args);
     }
 }

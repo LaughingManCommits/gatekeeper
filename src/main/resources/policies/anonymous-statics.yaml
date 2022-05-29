@@ -1,0 +1,7 @@
+staticResources:
+  - pathPattern: "/css/**"
+    requiredAccessLevel: 0
+  - pathPattern: "/js/app/**"
+    requiredAccessLevel: 0
+  - pathPattern: "/favicon.ico"
+    requiredAccessLevel: 0

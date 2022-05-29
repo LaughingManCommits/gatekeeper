@@ -8,7 +8,7 @@ import org.springframework.security.core.AuthenticationException;
 import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.security.web.AuthenticationEntryPoint;
 import org.springframework.stereotype.Component;
-import you.shall.not.pass.dto.ViolationDto;
+import you.shall.not.pass.dto.ViolationResponseDto;
 
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
@@ -27,17 +27,18 @@ public class CustomBasicAuthenticationEntryPoint implements AuthenticationEntryP
     }
 
     private void processError(HttpServletResponse response, AuthenticationException authException) {
-        ViolationDto violationDto = ViolationDto.builder()
+        ViolationResponseDto violationResponseDto = ViolationResponseDto.builder()
                 .message(authException.getMessage())
                 .build();
-        // todo improve error http status response
+        //TODO improve error http status response
         // UsernameNotFoundException http status 401
         // UserAccountLocked http status 403
+        log.info("error", authException);
         if (authException instanceof UsernameNotFoundException) {
             response.setStatus(HttpStatus.FORBIDDEN.value());
         }
 
-        writeResponse(response, gson.toJson(violationDto));
+        writeResponse(response, gson.toJson(violationResponseDto));
     }
 
     private void writeResponse(HttpServletResponse response, String message) {
