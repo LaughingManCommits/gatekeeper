@@ -26,9 +26,10 @@ NB Required:
 Run the following commands in your console:
 
 bash
-
+```
 mvn clean install -DskipTests
 mvn spring-boot:run
+```
 
 Open your browser at "http://localhost:8080/home."
 Access Levels Supported
