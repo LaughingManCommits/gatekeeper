@@ -1,88 +1,88 @@
 # Gatekeeper Test
 
-A very simple application that regulates resources by access level.
+Gatekeeper Test is a straightforward application designed to regulate resource access based on user access levels. Users can retrieve or access resources only when their session access level matches the required access level for the requested content.
 
-Users can only retrieve/access resources once their session access level is elevated to the required access level.
+For instance, when attempting to access content behind the URI "/Level1/**," the request undergoes validation. If the attached session lacks the necessary access level, the request is blocked.
+Current Tech Stack
 
-For example when requesting any content behind the URI "/Level1/\**", the request will be validated and blocked when the attached session does not have the required access level. 
+    Spring Boot
+    Apache Freemarker
+    Spring Security
 
-### Current Tech Stack
+### To-Do
 
-* Spring Boot
-* Apache Freemarker
-* Spring Security
-
-### todo
-* Complete and improve the unit tests located on ControllerIntegrationTests.java
-* Complete and improve the unit tests located on UserInteractionTests.java
-* Complete as many "todo"s as you can. Search the code for them.
-* Add Unit tests where you see fit.
-* Improve what ever code you wish to improve.
+    Enhance and complete unit tests in ControllerIntegrationTests.java.
+    Enhance and complete unit tests in UserInteractionTests.java.
+    Address all existing "todo" items in the code.
+    Add unit tests where appropriate.
+    Make necessary code improvements.
 
 NB Required:
-* Document all changes that you have made and provide motivation for the changes.
+
+    Document all changes made, providing motivation for each modification.
 
 ### Getting Started
-run the following commands in your console:
-* mvn clean install -DskipTests
-* mvn spring-boot:run
 
-Open your browser on "http://localhost:8080/home"
+Run the following commands in your console:
 
-### Access levels Supported
+bash
 
-* 0 is set to nothing
-* 1 is set to numeric password
-* 2 is alphanumeric password
+mvn clean install -DskipTests
+mvn spring-boot:run
+
+Open your browser at "http://localhost:8080/home."
+Access Levels Supported
+
+    0: No specific access
+    1: Numeric password required
+    2: Alphanumeric password required
 
 ### Access Endpoint
 
 POST "http://localhost:8080/authenticate"
 
-Required Headers
-* Authorization
-* XSRF
+Required Headers:
 
-Required Cookies
-* CSRF Cookie required (given when GET request is done to /home)
+    Authorization
+    XSRF
 
-Header Input Format
-* Authorization: Basic {requested_level}#{username}:{password} encoded base64
-* XSRF: alphanumeric (CSRF cookie value)
+Required Cookies:
 
-Authorization Header Example
+    CSRF Cookie (obtained from a GET request to /home)
 
-* Encoded request "Authorization: Basic MSNib2I6MTIzNDE="
-* Decoded "Authorization: Basic 1#bob:12341"
+Header Input Format:
 
-Successful Authentication Response
+    Authorization: Basic {requested_level}#{username}:{password} (base64 encoded)
+    XSRF: alphanumeric (CSRF cookie value)
 
+Authorization Header Example:
+
+    Encoded request: "Authorization: Basic MSNib2I6MTIzNDE="
+    Decoded: "Authorization: Basic 1#bob:12341"
+
+Successful Authentication Response:
+
+json
 ```
 {"authenticated":true}
 ```
+Error Authentication Response:
 
-Error Authentication Response
-Bad Credentials:
-```
-403
-```
-Bad CSRF:
-```
-400
-```
+    Bad Credentials: 403
+    Bad CSRF: 400
 
+On successful authentication responses:
 
-on successful authentication responses
+    Session cookie
+    New CSRF cookie
 
-* session cookie
-* new CSRF cookie
-
-### Resources Endpoint
+Resources Endpoint
 
 GET "http://localhost:8080/resources"
 
-Response
+Response:
 
+json
 ```
 { 
    "resources":[ 
@@ -95,25 +95,20 @@ Response
    ]
 }
 ```
-
-will give a list of all static resources hosted by the server
+This provides a list of all static resources hosted by the server.
 
 #### Resource Access Violations
 
-If no appropriate session is received on a resource request, an access(403) violation is
-returned.
+If no appropriate session is received on a resource request, an access (403) violation is returned.
 
+json
 ```
 {"requiredAccess":"Level1","message":"invalid accessLevel level"}
 ```
+### Basic CSRF Protection
 
-### Basic CSRF protection
+    A GET request to "/home" screen will receive a new CSRF token when no CSRF token is present.
+    Any successful authentication request will receive a new CSRF token.
+    Any POST request requires a CSRF token to be present.
 
-* A get request to "/home" screen will receive a new csrf token when no csrf token is present.
-* Any successful authentication request will receive a new csrf token.
-* Any POST request requires a CSRF token to be present
-
-
-Provide us with your git patch files containing your changes.
-Please make sure that if you have large formatting changes that this is not included with the patch files 
-
+Provide git patch files containing your changes. Ensure large formatting changes are excluded from the patch files.
