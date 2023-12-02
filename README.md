@@ -11,11 +11,11 @@ Current Tech Stack
 
 ### To-Do
 
-    Enhance and complete unit tests in ControllerIntegrationTests.java.
-    Enhance and complete unit tests in UserInteractionTests.java.
-    Address all existing "todo" items in the code.
-    Add unit tests where appropriate.
-    Make necessary code improvements.
+* Enhance and complete unit tests in ControllerIntegrationTests.java.
+* Enhance and complete unit tests in UserInteractionTests.java.
+* Address all existing "todo" items in the code.
+* Add unit tests where appropriate.
+* Make necessary code improvements.
 
 NB Required:
 
@@ -74,7 +74,7 @@ Error Authentication Response:
 
 On successful authentication responses:
 
-    Session cookie
+    New Session cookie
     New CSRF cookie
 
 Resources Endpoint
@@ -108,8 +108,8 @@ json
 ```
 ### Basic CSRF Protection
 
-    A GET request to "/home" screen will receive a new CSRF token when no CSRF token is present.
-    Any successful authentication request will receive a new CSRF token.
-    Any POST request requires a CSRF token to be present.
+* A GET request to "/home" screen will receive a new CSRF token when no CSRF token is present.
+* Any successful authentication request will receive a new CSRF token.
+* Any POST request requires a CSRF token to be present.
 
 Provide git patch files containing your changes. Ensure large formatting changes are excluded from the patch files.
