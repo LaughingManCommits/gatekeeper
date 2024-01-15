@@ -13,7 +13,7 @@ Current Tech Stack
 
 * Enhance and complete unit tests in ControllerIntegrationTests.java.
 * Enhance and complete unit tests in UserInteractionTests.java.
-* Address all existing "todo" items in the code.
+* Address all existing "todo" items in the code if possible.
 * Add unit tests where appropriate.
 * Make necessary code improvements.
 
