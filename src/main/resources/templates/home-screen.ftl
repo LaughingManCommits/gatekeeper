@@ -27,7 +27,7 @@
 
 <div ng-controller="AccessCtrl" ng-init="getItems()" class="generic-container">
 
-    <img src="https://media.giphy.com/media/njYrp176NQsHS/giphy.gif" alt="You shall not pass!!!"
+    <img src="https://media.giphy.com/media/njYrp176NQsHS/giphy.gif" alt="com.gate.keeper.!!"
          class="panel panel-default"/>
 
     <div class="panel-heading"><span class="lead">All available resources</span></div>

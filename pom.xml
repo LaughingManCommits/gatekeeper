@@ -8,7 +8,7 @@
         <version>2.6.8</version>
         <relativePath/>
     </parent>
-    <groupId>you.shall.not</groupId>
+    <groupId>com.gate.keeper</groupId>
     <artifactId>pass</artifactId>
     <version>0.0.1-SNAPSHOT</version>
     <name>gatekeeper project</name>
@@ -30,6 +30,12 @@
         <dependency>
             <groupId>org.springframework.boot</groupId>
             <artifactId>spring-boot-starter-freemarker</artifactId>
+        </dependency>
+
+        <dependency>
+            <groupId>com.h2database</groupId>
+            <artifactId>h2</artifactId>
+            <scope>runtime</scope>
         </dependency>
 
         <dependency>
