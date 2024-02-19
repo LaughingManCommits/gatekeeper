@@ -1,5 +1,9 @@
 package you.shall.not.pass.runner;
 
+import you.shall.not.pass.domain.AccessLevel;
+import you.shall.not.pass.domain.Password;
+import java.util.ArrayList;
+import java.util.List;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.boot.ApplicationArguments;
@@ -31,10 +35,12 @@ public class UserCreationRunner implements ApplicationRunner {
     public void run(ApplicationArguments applicationArguments) {
 
         for (UserProperties.User newUser : userProperties.getUsers()) {
-            UserAccount user = new UserAccount();
-            user.setUserName(newUser.getUserName());
-            user.setLevel1Password(passwordEncoder.encode(String.valueOf(newUser.getLevel1Password())).toCharArray());
-            user.setLevel2Password(passwordEncoder.encode(String.valueOf(newUser.getLevel2Password())).toCharArray());
+            List<Password> passwordList= new ArrayList<>();
+            passwordList.add(new Password(AccessLevel.Level1,passwordEncoder.encode(String.valueOf(newUser.getLevel1Password())).toCharArray()));
+            passwordList.add(new Password(AccessLevel.Level2,passwordEncoder.encode(String.valueOf(newUser.getLevel1Password())).toCharArray()));
+
+            UserAccount user = new UserAccount(newUser.getUserName(),
+                (ArrayList<Password>) passwordList);
             Optional<UserAccount> optionalUser = resp.findByUserName(newUser.getUserName());
             optionalUser.ifPresent(dbUser -> dbUser.setId(user.getId()));
             UserAccount saved = resp.save(user);

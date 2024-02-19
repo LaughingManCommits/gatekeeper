@@ -1,5 +1,6 @@
 package you.shall.not.pass.service;
 
+import java.time.Instant;
 import lombok.RequiredArgsConstructor;
 import org.apache.commons.lang3.StringUtils;
 import org.slf4j.Logger;
@@ -10,8 +11,6 @@ import you.shall.not.pass.domain.AccessLevel;
 import you.shall.not.pass.domain.Session;
 import you.shall.not.pass.domain.UserAccount;
 import you.shall.not.pass.repositories.SessionRepository;
-import you.shall.not.pass.security.SecurityContextService;
-import you.shall.not.pass.security.SecurityCsrfService;
 
 import java.time.LocalDateTime;
 import java.util.Date;
@@ -37,20 +36,24 @@ public class SessionService {
     }
 
     public Optional<String> createNewSessionForUser(String sessionId) {
+
         //TODO if a user is already known because has a active
         // session then his current user should be matched against
         // the stepped up authenticated user session
-        //TODO replace with proper exception
-        final String username = userContextService.getCurrentUser().orElseThrow(()
-                -> new RuntimeException("unknown user requesting session!"));
-        //TODO replace with proper exception
-        final AccessLevel level = userContextService.getCurrentAccessLevel().orElseThrow(()
-                -> new RuntimeException("Invalid user access level!"));
+        //TODO replace with proper exception --> Fixed
+        //TODO replace with proper exception --> Fixed
+
+        final String username = userContextService.getCurrentUser().orElseThrow(
+            () -> new UnknownUserException("Unknown user requesting session!"));
+
+        final AccessLevel level = userContextService.getCurrentAccessLevel().orElseThrow(
+            () -> new InvalidUserLevelException("Invalid user access level!"));
+
         return getSessionForAuthenticatedUser(sessionId, username, level);
     }
 
     public String createAnonymousSession(AccessLevel level) {
-        LOG.info("returning new session cookie");
+        LOG.info("Returning new session cookie");
         return createNewSessionCookie(level, null);
     }
 
@@ -60,9 +63,14 @@ public class SessionService {
         final boolean expired = isExpiredSession(currentSession);
 
         if (!expired) {
-            LOG.info("extending current session and attaching user");
-            //TODO replace with proper exception
-            Session session = currentSession.orElseThrow(() -> new RuntimeException("unknown user requesting session!"));
+            LOG.info("Extending current session and attaching user");
+            //TODO replace with proper exception --> Fixed
+            Session session = currentSession.orElseThrow(
+                () -> new UnknownUserException("Unknown user requesting session!"));
+
+            if (user.getId() == (session.getUserId())) {
+                return Optional.of(session.getToken());
+            }
             return Optional.of(rotateSessionToken(session, level, user));
         }
 
@@ -72,13 +80,13 @@ public class SessionService {
 
     public boolean isExpiredSession(Optional<Session> optionalSession) {
         return optionalSession.isEmpty() || optionalSession.filter(session -> LocalDateTime.now()
-                .isAfter(DateService.asLocalDateTime(session.getDate()))).isPresent();
+            .isAfter(DateService.asLocalDateTime(Date.from(session.getDate())))).isPresent();
     }
 
-    private String rotateSessionToken(Session session, AccessLevel grant, UserAccount user) {
+        private String rotateSessionToken(Session session, AccessLevel grant, UserAccount user) {
         final String token = securityCsrfService.generateToken();
-        Date date = DateService.asDate(LocalDateTime.now()
-                .plusSeconds(sessionExpirySeconds));
+        Instant date = DateService.asDate(LocalDateTime.now()
+                .plusSeconds(sessionExpirySeconds)).toInstant();
 
         session.setUserId(user.getId());
         session.setDate(date);
@@ -98,8 +106,8 @@ public class SessionService {
             session.setUserId(user.getId());
         }
 
-        Date date = DateService.asDate(LocalDateTime.now()
-                .plusSeconds(sessionExpirySeconds));
+        Instant date = DateService.asDate(LocalDateTime.now()
+                .plusSeconds(sessionExpirySeconds)).toInstant();
 
         session.setDate(date);
         session.setLevel(grant);
@@ -107,5 +115,17 @@ public class SessionService {
 
         sessionRepository.save(session);
         return token;
+    }
+
+    private static class UnknownUserException extends RuntimeException {
+        public UnknownUserException(String message) {
+            super(message);
+        }
+    }
+
+    private static class InvalidUserLevelException extends RuntimeException {
+        public InvalidUserLevelException(String message) {
+            super(message);
+        }
     }
 }

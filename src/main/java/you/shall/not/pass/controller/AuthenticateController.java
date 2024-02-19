@@ -45,7 +45,10 @@ public class AuthenticateController {
     @ResponseStatus(value = HttpStatus.BAD_REQUEST)
     public @ResponseBody ViolationResponseDto handleCsrfError() {
         //TODO Improve error handling to cover all known unchecked exceptions, validate service layers for exceptions
+
         return ViolationResponseDto.builder().message("TODO!!!").build();
     }
+
+
 
 }
