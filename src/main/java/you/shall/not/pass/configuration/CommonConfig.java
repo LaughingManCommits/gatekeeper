@@ -21,7 +21,7 @@ import java.util.List;
 
 @Slf4j
 @Configuration
-@EnableJpaRepositories(basePackages = "com.gate.keeper.repositories")
+@EnableJpaRepositories(basePackages = "you.shall.not.pass.repositories")
 public class CommonConfig {
 
     @Bean
